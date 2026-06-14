@@ -7,7 +7,6 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
   :root {
     --dep-dark: #0D0D1A;
     --dep-navy: #12122A;
@@ -20,426 +19,147 @@
     --dep-card: #1A1A30;
     --dep-border: rgba(107,47,217,0.3);
   }
+  body { background: var(--dep-dark); color: var(--dep-white); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
 
-  body {
-    background: var(--dep-dark);
-    color: var(--dep-white);
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  .header { background: linear-gradient(135deg, var(--dep-navy) 0%, #1a0a3a 100%); padding: 16px; text-align: center; border-bottom: 1px solid var(--dep-border); position: sticky; top: 0; z-index: 100; }
+  .header-logo { font-size: 11px; letter-spacing: 4px; color: var(--dep-grey); text-transform: uppercase; margin-bottom: 2px; }
+  .header-title { font-size: 20px; font-weight: 800; letter-spacing: 2px; background: linear-gradient(90deg, var(--dep-purple-light), var(--dep-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header-disclaimer { font-size: 9px; color: var(--dep-grey); margin-top: 4px; letter-spacing: 1px; }
 
-  /* HEADER */
-  .header {
-    background: linear-gradient(135deg, var(--dep-navy) 0%, #1a0a3a 100%);
-    padding: 16px;
-    text-align: center;
-    border-bottom: 1px solid var(--dep-border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-logo {
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--dep-grey);
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-
-  .header-title {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    background: linear-gradient(90deg, var(--dep-purple-light), var(--dep-pink));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .header-disclaimer {
-    font-size: 9px;
-    color: var(--dep-grey);
-    margin-top: 4px;
-    letter-spacing: 1px;
-  }
-
-  /* TABS */
-  .tabs {
-    display: flex;
-    background: var(--dep-navy);
-    border-bottom: 1px solid var(--dep-border);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+  .tabs { display: flex; background: var(--dep-navy); border-bottom: 1px solid var(--dep-border); overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 0 0 auto; padding: 12px 20px; font-size: 13px; font-weight: 600; color: var(--dep-grey); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .tab.active { color: var(--dep-accent); border-bottom-color: var(--dep-accent); }
 
-  .tab {
-    flex: 0 0 auto;
-    padding: 12px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--dep-grey);
-    cursor: pointer;
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-  }
-  .tab.active {
-    color: var(--dep-accent);
-    border-bottom-color: var(--dep-accent);
-  }
-
-  /* CONTENT */
   .content { padding: 16px; padding-bottom: 120px; }
+  .page { display: none; }
+  .page.active { display: block; }
 
-  /* PRODUCT GRID */
-  .product-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .product-card {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.15s, border-color 0.15s;
-    position: relative;
-  }
-  .product-card:active { transform: scale(0.97); }
-  .product-card.in-cart { border-color: var(--dep-purple); }
-
-  .product-img {
+  /* PRODUCT ICON */
+  .product-icon {
     width: 100%;
     aspect-ratio: 1;
-    object-fit: cover;
-    background: #1e1e38;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    overflow: hidden;
   }
-
-  .product-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: var(--dep-purple);
-    color: white;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
+  .vial-body {
+    width: 44px;
+    height: 62px;
+    border-radius: 4px 4px 8px 8px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
+    box-shadow: inset -4px 0 8px rgba(0,0,0,0.2), inset 4px 0 8px rgba(255,255,255,0.1);
   }
-
-  .uitverkocht-badge {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.65);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
+  .vial-cap {
+    width: 28px;
+    height: 14px;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: -2px;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.3);
   }
-  .uitverkocht-badge span {
-    background: #ff4444;
+  .vial-label {
+    font-size: 8px;
+    font-weight: 900;
     color: white;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    letter-spacing: 0.5px;
+    padding: 0 4px;
+    line-height: 1.2;
+  }
+  .vial-shine {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    width: 8px;
+    bottom: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
   }
 
+  /* PRODUCT GRID */
+  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .product-card { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; position: relative; }
+  .product-card:active { transform: scale(0.97); }
+  .product-card.in-cart { border-color: var(--dep-purple); }
+  .product-badge { position: absolute; top: 8px; right: 8px; background: var(--dep-purple); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; z-index: 2; }
+  .uitverkocht-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 56%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
+  .uitverkocht-overlay span { background: #ff4444; color: white; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
   .product-info { padding: 10px; }
   .product-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; line-height: 1.3; }
   .product-hoeveelheid { font-size: 10px; color: var(--dep-grey); margin-bottom: 6px; }
   .product-prijs { font-size: 15px; font-weight: 800; color: var(--dep-accent); }
+  .add-btn { width: 100%; margin-top: 8px; padding: 7px; background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink)); border: none; border-radius: 8px; color: white; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .add-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
 
-  .add-btn {
-    width: 100%;
-    margin-top: 8px;
-    padding: 7px;
-    background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink));
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .add-btn:disabled {
-    background: #333;
-    color: #666;
-    cursor: not-allowed;
-  }
-
-  /* DETAIL VIEW */
-  .detail-view {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--dep-dark);
-    z-index: 200;
-    overflow-y: auto;
-  }
+  /* DETAIL */
+  .detail-view { display: none; position: fixed; inset: 0; background: var(--dep-dark); z-index: 200; overflow-y: auto; }
   .detail-view.open { display: block; }
-
-  .detail-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid var(--dep-border);
-    position: sticky;
-    top: 0;
-    background: var(--dep-dark);
-    z-index: 10;
-  }
-
-  .back-btn {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    color: var(--dep-white);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  .detail-img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    background: #1e1e38;
-    padding: 20px;
-  }
-
+  .detail-header { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid var(--dep-border); position: sticky; top: 0; background: var(--dep-dark); z-index: 10; }
+  .back-btn { background: var(--dep-card); border: 1px solid var(--dep-border); color: var(--dep-white); padding: 8px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+  .detail-icon-wrap { width: 100%; height: 220px; display: flex; align-items: center; justify-content: center; }
   .detail-content { padding: 20px; }
   .detail-name { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
   .detail-hoeveelheid { color: var(--dep-grey); margin-bottom: 12px; }
   .detail-prijs { font-size: 28px; font-weight: 800; color: var(--dep-accent); margin-bottom: 20px; }
-
-  .detail-info {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+  .detail-info { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
   .detail-info h3 { font-size: 13px; color: var(--dep-accent); margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
   .detail-info p { font-size: 14px; color: #ccc; line-height: 1.7; }
   .detail-info ul { padding-left: 16px; }
   .detail-info li { font-size: 14px; color: #ccc; line-height: 1.8; }
-
-  .qty-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+  .qty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
   .qty-label { font-size: 14px; color: var(--dep-grey); }
-  .qty-controls { display: flex; align-items: center; gap: 0; }
-  .qty-btn {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    color: var(--dep-white);
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .qty-controls { display: flex; align-items: center; }
+  .qty-btn { background: var(--dep-card); border: 1px solid var(--dep-border); color: var(--dep-white); width: 36px; height: 36px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .qty-btn:first-child { border-radius: 8px 0 0 8px; }
   .qty-btn:last-child { border-radius: 0 8px 8px 0; }
-  .qty-num {
-    background: var(--dep-card);
-    border-top: 1px solid var(--dep-border);
-    border-bottom: 1px solid var(--dep-border);
-    width: 44px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  .detail-add-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink));
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 1px;
-  }
+  .qty-num { background: var(--dep-card); border-top: 1px solid var(--dep-border); border-bottom: 1px solid var(--dep-border); width: 44px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; }
+  .detail-add-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink)); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; }
 
   /* CART */
-  .cart-empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--dep-grey);
-  }
+  .cart-empty { text-align: center; padding: 60px 20px; color: var(--dep-grey); }
   .cart-empty .icon { font-size: 48px; margin-bottom: 12px; }
-
-  .cart-item {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .cart-item-img {
-    width: 56px;
-    height: 56px;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #1e1e38;
-    flex-shrink: 0;
-  }
+  .cart-item { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .cart-item-icon { width: 56px; height: 56px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .cart-item-info { flex: 1; }
   .cart-item-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
   .cart-item-sub { font-size: 12px; color: var(--dep-grey); }
   .cart-item-prijs { font-size: 15px; font-weight: 800; color: var(--dep-accent); margin-top: 4px; }
-  .cart-item-remove {
-    background: none;
-    border: 1px solid #ff444466;
-    color: #ff6666;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
+  .cart-item-remove { background: none; border: 1px solid #ff444466; color: #ff6666; width: 30px; height: 30px; border-radius: 8px; font-size: 16px; cursor: pointer; flex-shrink: 0; }
+  .cart-totaal { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; padding: 16px; margin-top: 16px; margin-bottom: 12px; }
+  .cart-totaal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; color: var(--dep-grey); }
+  .cart-totaal-row.totaal { font-size: 18px; font-weight: 800; color: var(--dep-white); margin-bottom: 0; padding-top: 10px; border-top: 1px solid var(--dep-border); }
+  .cart-gratis { background: rgba(107,47,217,0.15); border: 1px solid var(--dep-border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--dep-accent); margin-bottom: 16px; }
 
-  .cart-totaal {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 16px;
-    margin-bottom: 12px;
-  }
-  .cart-totaal-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: var(--dep-grey);
-  }
-  .cart-totaal-row.totaal {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--dep-white);
-    margin-bottom: 0;
-    padding-top: 10px;
-    border-top: 1px solid var(--dep-border);
-  }
-  .cart-gratis {
-    background: rgba(107,47,217,0.15);
-    border: 1px solid var(--dep-border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--dep-accent);
-    margin-bottom: 16px;
-  }
-
-  /* BESTEL FORM */
+  /* FORM */
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 12px; color: var(--dep-grey); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 1px; }
-  .form-input {
-    width: 100%;
-    padding: 13px 14px;
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    border-radius: 10px;
-    color: var(--dep-white);
-    font-size: 15px;
-    outline: none;
-  }
+  .form-input { width: 100%; padding: 13px 14px; background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 10px; color: var(--dep-white); font-size: 15px; outline: none; }
   .form-input:focus { border-color: var(--dep-accent); }
-
-  .bestel-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink));
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 1px;
-    margin-top: 8px;
-  }
-  .bestel-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+  .bestel-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink)); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
   /* SUCCES */
-  .succes-view {
-    display: none;
-    text-align: center;
-    padding: 60px 24px;
-  }
+  .succes-view { display: none; text-align: center; padding: 60px 24px; }
   .succes-view.open { display: block; }
   .succes-icon { font-size: 64px; margin-bottom: 20px; }
   .succes-title { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
   .succes-text { color: var(--dep-grey); line-height: 1.7; margin-bottom: 32px; }
 
   /* FLOATING CART */
-  .floating-cart {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink));
-    border: none;
-    border-radius: 50px;
-    padding: 14px 20px;
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 20px rgba(107,47,217,0.5);
-    z-index: 150;
-  }
+  .floating-cart { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink)); border: none; border-radius: 50px; padding: 14px 20px; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: none; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(107,47,217,0.5); z-index: 150; }
   .floating-cart.visible { display: flex; }
 
-  /* INFO PAGE */
-  .info-section {
-    background: var(--dep-card);
-    border: 1px solid var(--dep-border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-  .info-section h3 {
-    font-size: 14px;
-    color: var(--dep-accent);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  /* INFO */
+  .info-section { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .info-section h3 { font-size: 14px; color: var(--dep-accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
   .info-section p { font-size: 14px; color: #ccc; line-height: 1.7; }
-
-  .page { display: none; }
-  .page.active { display: block; }
 </style>
 </head>
 <body>
@@ -457,28 +177,14 @@
 </div>
 
 <div class="content">
-  <!-- PAGE 0: PRODUCTEN -->
-  <div class="page active" id="page-0">
-    <div class="product-grid" id="product-grid"></div>
-  </div>
-
-  <!-- PAGE 1: WINKELWAGEN -->
+  <div class="page active" id="page-0"><div class="product-grid" id="product-grid"></div></div>
   <div class="page" id="page-1">
     <div id="cart-content"></div>
     <div id="bestel-form" style="display:none">
       <h3 style="margin-bottom:16px;font-size:16px;">📦 Bezorggegevens</h3>
-      <div class="form-group">
-        <label class="form-label">Volledige naam</label>
-        <input class="form-input" id="input-naam" type="text" placeholder="Jan de Vries">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Straat + huisnummer</label>
-        <input class="form-input" id="input-straat" type="text" placeholder="Hoofdstraat 12">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Postcode + woonplaats</label>
-        <input class="form-input" id="input-woonplaats" type="text" placeholder="5000 AB Tilburg">
-      </div>
+      <div class="form-group"><label class="form-label">Volledige naam</label><input class="form-input" id="input-naam" type="text" placeholder="Jan de Vries"></div>
+      <div class="form-group"><label class="form-label">Straat + huisnummer</label><input class="form-input" id="input-straat" type="text" placeholder="Hoofdstraat 12"></div>
+      <div class="form-group"><label class="form-label">Postcode + woonplaats</label><input class="form-input" id="input-woonplaats" type="text" placeholder="5000 AB Tilburg"></div>
       <button class="bestel-btn" onclick="verstuurBestelling()">✅ Bestelling plaatsen</button>
     </div>
     <div class="succes-view" id="succes-view">
@@ -488,43 +194,25 @@
       <button class="bestel-btn" onclick="nieuwebestelling()">Verder winkelen</button>
     </div>
   </div>
-
-  <!-- PAGE 2: INFO -->
   <div class="page" id="page-2">
-    <div class="info-section">
-      <h3>📦 Levering</h3>
-      <p>Wij leveren snel en discreet. Naalden en Bacwater zijn altijd gratis inbegrepen bij elke bestelling.</p>
-    </div>
-    <div class="info-section">
-      <h3>💉 Accessoires</h3>
-      <p>• Peptide Pen (herbruikbaar) – €20,-<br>• Naalden (10 stuks) – €5,-<br>• Ampul voor pen – €1,-</p>
-    </div>
-    <div class="info-section">
-      <h3>⚠️ Disclaimer</h3>
-      <p>Alle producten zijn uitsluitend bestemd voor onderzoeksdoeleinden. Not for Human Consumption. Dutch Elite Peptides is niet verantwoordelijk voor onjuist gebruik.</p>
-    </div>
-    <div class="info-section">
-      <h3>📞 Contact</h3>
-      <p>Vragen? Neem contact op via de Telegram groep of stuur een bericht naar @annaschellevis.</p>
-    </div>
+    <div class="info-section"><h3>📦 Levering</h3><p>Wij leveren snel en discreet. Naalden en Bacwater zijn altijd gratis inbegrepen bij elke bestelling.</p></div>
+    <div class="info-section"><h3>💉 Accessoires</h3><p>• Peptide Pen (herbruikbaar) – €20,-<br>• Naalden (10 stuks) – €5,-<br>• Ampul voor pen – €1,-</p></div>
+    <div class="info-section"><h3>⚠️ Disclaimer</h3><p>Alle producten zijn uitsluitend bestemd voor onderzoeksdoeleinden. Not for Human Consumption.</p></div>
+    <div class="info-section"><h3>📞 Contact</h3><p>Vragen? Stuur een bericht naar @annaschellevis via Telegram.</p></div>
   </div>
 </div>
 
-<!-- DETAIL VIEW -->
 <div class="detail-view" id="detail-view">
   <div class="detail-header">
     <button class="back-btn" onclick="sluitDetail()">← Terug</button>
     <span id="detail-header-naam" style="font-weight:700;font-size:15px;"></span>
   </div>
-  <img class="detail-img" id="detail-img" src="" alt="">
+  <div class="detail-icon-wrap" id="detail-icon-wrap"></div>
   <div class="detail-content">
     <div id="detail-naam" class="detail-name"></div>
     <div id="detail-hoeveelheid" class="detail-hoeveelheid"></div>
     <div id="detail-prijs" class="detail-prijs"></div>
-    <div class="detail-info">
-      <h3>Over dit peptide</h3>
-      <div id="detail-info-text"></div>
-    </div>
+    <div class="detail-info"><h3>Over dit peptide</h3><div id="detail-info-text"></div></div>
     <div class="qty-row">
       <span class="qty-label">Aantal:</span>
       <div class="qty-controls">
@@ -533,82 +221,67 @@
         <button class="qty-btn" onclick="qtyAanpassen(1)">+</button>
       </div>
     </div>
-    <button class="detail-add-btn" id="detail-add-btn" onclick="voegToeVanuitDetail()">
-      🛒 Toevoegen aan winkelwagen
-    </button>
+    <button class="detail-add-btn" onclick="voegToeVanuitDetail()">🛒 Toevoegen aan winkelwagen</button>
   </div>
 </div>
 
-<!-- FLOATING CART -->
 <button class="floating-cart" id="floating-cart" onclick="setTab(1)">
-  🛒 <span id="cart-count">0</span> items · €<span id="cart-total-float">0</span>
+  🛒 <span id="cart-count">0</span> items · €<span id="cart-total-float">0.00</span>
 </button>
 
 <script>
-const PLACEHOLDER = 'https://raw.githubusercontent.com/StudioGeeNL/dep-bot/main/images/Bacwater_3_ml.png';
-const BASE_IMG = 'https://raw.githubusercontent.com/StudioGeeNL/dep-bot/main/';
-
 const PRODUCTEN = [
-  { id: 'bpc157', naam: 'BPC 157', hoeveelheid: '5 mg', prijs: 25, uitverkocht: false, img: 'BPC_157.png',
-    info: '<p>BPC 157 is een van de meest onderzochte herstelspeptides ter wereld.</p><br><ul><li>Versnelt herstel van spieren, pezen en ligamenten</li><li>Ondersteunt herstel van het maagdarmkanaal</li><li>Vermindert ontstekingen</li><li>Beschermt zenuwweefsel</li></ul><br><p><strong>Toediening:</strong> injectie (subcutaan) of oraal</p>' },
-  { id: 'igf1lr3', naam: 'IGF 1 LR3', hoeveelheid: '1 mg', prijs: 75, uitverkocht: false, img: 'IGF_1_LR3_1mg.png',
-    info: '<ul><li>Stimuleert spiergroei (nieuwe spiercellen)</li><li>Versnelt vetverlies</li><li>Verbetert herstel na training</li><li>Verhoogt spierkracht</li></ul><br><p><strong>Toediening:</strong> injectie</p>' },
-  { id: 'mt2', naam: 'Melanotan 2 (MT2)', hoeveelheid: '10 mg', prijs: 40, uitverkocht: false, img: 'MT2_10mg.png',
-    info: '<ul><li>Donkerdere huid zonder overmatige zon</li><li>Beschermt tegen UV-schade</li><li>Verhoogt libido</li><li>Vermindert eetlust</li></ul><br><p><strong>Toediening:</strong> injectie (subcutaan)</p>' },
-  { id: 'pt141', naam: 'PT-141', hoeveelheid: 'Neusspray', prijs: 40, uitverkocht: false, img: 'PT141_10mg.png',
-    info: '<ul><li>Verhoogt seksueel verlangen bij mannen én vrouwen</li><li>Werkt via centraal zenuwstelsel</li><li>Snel werkend</li></ul><br><p><strong>Toediening:</strong> neusspray (20-45 min voor gebruik)</p>' },
-  { id: 'reta15', naam: 'Retatrutide 15mg', hoeveelheid: '15 mg', prijs: 100, uitverkocht: false, img: 'Retatrutide_algemeen.png',
-    info: '<p>Nieuwste generatie afslankinjectie — triple receptor agonist. Krachtiger dan Mounjaro.</p><br><ul><li>Tot 24% gewichtsverlies</li><li>Sterkere eetlustremming</li><li>Verhoogt energieverbruik</li></ul><br><p><strong>Toediening:</strong> injectie, wekelijks</p>' },
-  { id: 'reta10', naam: 'Retatrutide 10mg', hoeveelheid: '10 mg', prijs: 75, uitverkocht: false, img: 'Retatrutide_algemeen.png',
-    info: '<p>Lagere startdosis retatrutide. Advies: begin met 2mg/week.</p><br><p><strong>Toediening:</strong> injectie, wekelijks</p>' },
-  { id: 'mounjaro15', naam: 'Mounjaro 15mg', hoeveelheid: '15 mg', prijs: 150, uitverkocht: false, img: 'Tirzepatide_30_mg.png',
-    info: '<p>Dual GIP/GLP-1 receptor agonist. Krachtig afslankmiddel.</p><br><ul><li>Gemiddeld 15-22% gewichtsverlies</li><li>Krachtige eetlustremming</li><li>Verbetert bloedsuikerspiegel</li></ul><br><p><strong>Toediening:</strong> injectie, wekelijks</p>' },
-  { id: 'mounjaro30', naam: 'Mounjaro 30mg', hoeveelheid: '30 mg', prijs: 300, uitverkocht: false, img: 'Tirzepatide_30_mg.png',
-    info: '<p>Hogere dosering tirzepatide voor gevorderden.</p><br><p><strong>Toediening:</strong> injectie, wekelijks</p>' },
-  { id: '5amino', naam: '5amino-1-mq', hoeveelheid: '10 mg', prijs: 40, uitverkocht: false, img: null,
-    info: '<ul><li>Verhoogt vetverbranding op cellulair niveau</li><li>Remt aanmaak nieuwe vetcellen</li><li>Verhoogt energieniveau</li></ul><br><p><strong>Toediening:</strong> oraal</p>' },
-  { id: 'dsip', naam: 'DSIP', hoeveelheid: '5 mg', prijs: 40, uitverkocht: false, img: null,
-    info: '<ul><li>Bevordert diepe slaap</li><li>Normaliseert slaap-waakritme</li><li>Vermindert stress en cortisol</li></ul><br><p><strong>Toediening:</strong> injectie (subcutaan)</p>' },
-  { id: 'epithalon', naam: 'Epithalon', hoeveelheid: '10 mg', prijs: 40, uitverkocht: false, img: null,
-    info: '<ul><li>Anti-aging op cellulair niveau</li><li>Verbetert slaapkwaliteit</li><li>Versterkt immuunsysteem</li></ul><br><p><strong>Toediening:</strong> injectie (subcutaan)</p>' },
-  { id: 'ghkcu', naam: 'GHK-CU', hoeveelheid: '50 mg', prijs: 20, uitverkocht: true, img: null,
-    info: '<ul><li>Stimuleert collageenproductie</li><li>Wondgenezing en huidverjonging</li><li>Krachtige antioxidant</li></ul>' },
-  { id: 'ghkserum7', naam: 'Ghk-Cu Serum 7ml', hoeveelheid: '7 ml', prijs: 7.50, uitverkocht: false, img: null,
-    info: '<p>Topisch serum — direct op de huid.</p><br><ul><li>Stimuleert collageen</li><li>Vermindert rimpels</li><li>Verbetert huidtextuur</li></ul>' },
-  { id: 'ghkserum30', naam: 'Ghk-Cu Serum 30ml', hoeveelheid: '30 ml', prijs: 30, uitverkocht: false, img: null,
-    info: '<p>Grotere verpakking GHK-Cu serum. Zelfde werking als 7ml.</p>' },
-  { id: 'kpv', naam: 'KPV', hoeveelheid: '5 mg', prijs: 25, uitverkocht: false, img: null,
-    info: '<ul><li>Ontstekingsremmend</li><li>Effectief bij darmziekten</li><li>Wondgenezing huid</li></ul>' },
-  { id: 'motsc', naam: 'MOTS-C', hoeveelheid: '10 mg', prijs: 40, uitverkocht: false, img: null,
-    info: '<ul><li>Verhoogt energieniveau</li><li>Verbetert insulinegevoeligheid</li><li>Ondersteunt vetverlies</li></ul>' },
-  { id: 'nad', naam: 'NAD+', hoeveelheid: '500 mg', prijs: 60, uitverkocht: false, img: null,
-    info: '<ul><li>Verhoogt energie significant</li><li>DNA-reparatie</li><li>Anti-aging via sirtuines</li></ul>' },
-  { id: 'oxytocine', naam: 'Oxytocine', hoeveelheid: 'Neusspray', prijs: 15, uitverkocht: false, img: null,
-    info: '<ul><li>Bevordert verbondenheid</li><li>Vermindert sociale angst</li><li>Kalmerend effect</li></ul>' },
-  { id: 'selank', naam: 'Selank', hoeveelheid: '5 mg', prijs: 25, uitverkocht: false, img: null,
-    info: '<ul><li>Vermindert angst en stress</li><li>Verbetert stemming</li><li>Niet verslavend</li></ul>' },
-  { id: 'semax', naam: 'Semax', hoeveelheid: '5 mg', prijs: 25, uitverkocht: false, img: null,
-    info: '<ul><li>Verhoogt focus en helderheid</li><li>Stimuleert BDNF</li><li>Vermindert mentale vermoeidheid</li></ul>' },
-  { id: 'tb500', naam: 'TB500', hoeveelheid: '5 mg', prijs: 25, uitverkocht: false, img: null,
-    info: '<ul><li>Versneld herstel van spieren en pezen</li><li>Vermindert littekenvorming</li><li>Ontstekingsremmend</li></ul>' },
-  { id: 'tesamorelin', naam: 'Tesamorelin', hoeveelheid: '5 mg', prijs: 30, uitverkocht: false, img: null,
-    info: '<ul><li>Gericht vetverlies (buikvet)</li><li>Verhoogt groeihormoon</li><li>Meer energie</li></ul>' },
-  { id: 'pen', naam: 'Peptide Pen', hoeveelheid: '1 pen', prijs: 20, uitverkocht: false, img: null, info: '<p>Herbruikbare peptide pen voor eenvoudige toediening.</p>' },
-  { id: 'naalden', naam: 'Naalden', hoeveelheid: '10 stuks', prijs: 5, uitverkocht: false, img: null, info: '<p>Steriele naalden voor subcutane injecties.</p>' },
-  { id: 'ampul', naam: 'Ampul voor pen', hoeveelheid: 'per stuk', prijs: 1, uitverkocht: false, img: null, info: '<p>Vervangampul voor de peptide pen.</p>' },
+  { id:'bpc157',    naam:'BPC 157',           hoeveelheid:'5 mg',      prijs:25,   uitverkocht:false, kleur:'#7B2FBE', cap:'#6B2FD9', info:'<ul><li>Versnelt herstel van spieren, pezen en ligamenten</li><li>Ondersteunt het maagdarmkanaal</li><li>Vermindert ontstekingen</li><li>Beschermt zenuwweefsel</li></ul><br><p><b>Toediening:</b> injectie of oraal</p>' },
+  { id:'dsip',      naam:'DSIP',              hoeveelheid:'5 mg',      prijs:40,   uitverkocht:false, kleur:'#1a3a5c', cap:'#1e5fa8', info:'<ul><li>Bevordert diepe slaap</li><li>Normaliseert slaap-waakritme</li><li>Vermindert stress en cortisol</li></ul><br><p><b>Toediening:</b> injectie (subcutaan)</p>' },
+  { id:'epithalon', naam:'Epithalon',         hoeveelheid:'10 mg',     prijs:40,   uitverkocht:false, kleur:'#1a4a2e', cap:'#228a4a', info:'<ul><li>Anti-aging op cellulair niveau</li><li>Verbetert slaapkwaliteit</li><li>Versterkt immuunsysteem</li></ul><br><p><b>Toediening:</b> injectie (subcutaan)</p>' },
+  { id:'ghkserum7', naam:'Ghk-Cu Serum 7ml',  hoeveelheid:'7 ml',      prijs:7.5,  uitverkocht:false, kleur:'#3a2a1a', cap:'#c8860a', info:'<ul><li>Stimuleert collageen</li><li>Vermindert rimpels</li><li>Verbetert huidtextuur</li></ul><br><p><b>Toediening:</b> topisch op huid</p>' },
+  { id:'ghkserum30',naam:'Ghk-Cu Serum 30ml', hoeveelheid:'30 ml',     prijs:30,   uitverkocht:false, kleur:'#3a2a1a', cap:'#c8860a', info:'<p>Grotere verpakking GHK-Cu serum. Zelfde werking als 7ml.</p><br><p><b>Toediening:</b> topisch op huid</p>' },
+  { id:'ghkcu',     naam:'GHK-CU',            hoeveelheid:'50 mg',     prijs:20,   uitverkocht:true,  kleur:'#2a1a3a', cap:'#8B5CF6', info:'<ul><li>Stimuleert collageenproductie</li><li>Wondgenezing</li><li>Huidverjonging</li></ul>' },
+  { id:'igf1lr3',   naam:'IGF 1 LR3',         hoeveelheid:'1 mg',      prijs:75,   uitverkocht:false, kleur:'#1a1a1a', cap:'#333333', info:'<ul><li>Stimuleert spiergroei</li><li>Versnelt vetverlies</li><li>Verbetert herstel na training</li><li>Verhoogt spierkracht</li></ul><br><p><b>Toediening:</b> injectie</p>' },
+  { id:'kpv',       naam:'KPV',               hoeveelheid:'5 mg',      prijs:25,   uitverkocht:false, kleur:'#1a3a3a', cap:'#0a8a8a', info:'<ul><li>Ontstekingsremmend</li><li>Effectief bij darmziekten</li><li>Wondgenezing huid</li></ul><br><p><b>Toediening:</b> oraal of injectie</p>' },
+  { id:'mounjaro15',naam:'Mounjaro 15mg',      hoeveelheid:'15 mg',     prijs:150,  uitverkocht:false, kleur:'#3a1a1a', cap:'#cc2222', info:'<ul><li>Gemiddeld 15-22% gewichtsverlies</li><li>Krachtige eetlustremming</li><li>Verbetert bloedsuikerspiegel</li></ul><br><p><b>Toediening:</b> injectie, wekelijks</p>' },
+  { id:'mounjaro30',naam:'Mounjaro 30mg',      hoeveelheid:'30 mg',     prijs:300,  uitverkocht:false, kleur:'#3a1a1a', cap:'#cc2222', info:'<p>Hogere dosering tirzepatide voor gevorderden.</p><br><p><b>Toediening:</b> injectie, wekelijks</p>' },
+  { id:'mt2',       naam:'Melanotan 2 (MT2)',  hoeveelheid:'10 mg',     prijs:40,   uitverkocht:false, kleur:'#3a3200', cap:'#d4a800', info:'<ul><li>Donkerdere huid</li><li>UV-bescherming</li><li>Verhoogt libido</li><li>Vermindert eetlust</li></ul><br><p><b>Toediening:</b> injectie (subcutaan)</p>' },
+  { id:'motsc',     naam:'MOTS-C',            hoeveelheid:'10 mg',     prijs:40,   uitverkocht:false, kleur:'#1a2a3a', cap:'#2255aa', info:'<ul><li>Verhoogt energieniveau</li><li>Verbetert insulinegevoeligheid</li><li>Ondersteunt vetverlies</li></ul><br><p><b>Toediening:</b> injectie (subcutaan)</p>' },
+  { id:'nad',       naam:'NAD+',              hoeveelheid:'500 mg',    prijs:60,   uitverkocht:false, kleur:'#2a1a3a', cap:'#8822cc', info:'<ul><li>Verhoogt energie significant</li><li>DNA-reparatie</li><li>Anti-aging via sirtuines</li><li>Verbetert cognitie</li></ul><br><p><b>Toediening:</b> injectie</p>' },
+  { id:'oxytocine', naam:'Oxytocine',         hoeveelheid:'Neusspray', prijs:15,   uitverkocht:false, kleur:'#1a3a2a', cap:'#22aa66', info:'<ul><li>Bevordert verbondenheid</li><li>Vermindert sociale angst</li><li>Kalmerend effect</li></ul><br><p><b>Toediening:</b> neusspray</p>' },
+  { id:'pt141',     naam:'PT-141',            hoeveelheid:'Neusspray', prijs:40,   uitverkocht:false, kleur:'#0a2a0a', cap:'#22aa22', info:'<ul><li>Verhoogt libido bij mannen én vrouwen</li><li>Werkt via centraal zenuwstelsel</li><li>Snel werkend</li></ul><br><p><b>Toediening:</b> neusspray (20-45 min voor gebruik)</p>' },
+  { id:'reta15',    naam:'Retatrutide 15mg',  hoeveelheid:'15 mg',     prijs:100,  uitverkocht:false, kleur:'#0a1a3a', cap:'#1155cc', info:'<ul><li>Tot 24% gewichtsverlies</li><li>Sterkere eetlustremming dan Mounjaro</li><li>Verhoogt energieverbruik</li></ul><br><p><b>Toediening:</b> injectie, wekelijks</p>' },
+  { id:'reta10',    naam:'Retatrutide 10mg',  hoeveelheid:'10 mg',     prijs:75,   uitverkocht:false, kleur:'#0a1a3a', cap:'#1155cc', info:'<p>Lagere startdosis retatrutide. Advies: begin met 2mg/week.</p><br><p><b>Toediening:</b> injectie, wekelijks</p>' },
+  { id:'selank',    naam:'Selank',            hoeveelheid:'5 mg',      prijs:25,   uitverkocht:false, kleur:'#2a1a2a', cap:'#aa22aa', info:'<ul><li>Vermindert angst en stress</li><li>Verbetert stemming</li><li>Niet verslavend</li></ul><br><p><b>Toediening:</b> neusspray of injectie</p>' },
+  { id:'semax',     naam:'Semax',             hoeveelheid:'5 mg',      prijs:25,   uitverkocht:false, kleur:'#1a2a1a', cap:'#448844', info:'<ul><li>Verhoogt focus en helderheid</li><li>Stimuleert BDNF</li><li>Vermindert mentale vermoeidheid</li></ul><br><p><b>Toediening:</b> neusspray of injectie</p>' },
+  { id:'tb500',     naam:'TB500',             hoeveelheid:'5 mg',      prijs:25,   uitverkocht:false, kleur:'#1a1a2a', cap:'#4444aa', info:'<ul><li>Versneld herstel van spieren en pezen</li><li>Vermindert littekenvorming</li><li>Ontstekingsremmend</li></ul><br><p><b>Toediening:</b> injectie</p>' },
+  { id:'tesamorelin',naam:'Tesamorelin',      hoeveelheid:'5 mg',      prijs:30,   uitverkocht:false, kleur:'#2a1a1a', cap:'#aa4422', info:'<ul><li>Gericht vetverlies (buikvet)</li><li>Verhoogt groeihormoon</li><li>Meer energie</li></ul><br><p><b>Toediening:</b> injectie (subcutaan)</p>' },
+  { id:'amino',     naam:'5amino-1-mq',       hoeveelheid:'10 mg',     prijs:40,   uitverkocht:false, kleur:'#1a2a2a', cap:'#228888', info:'<ul><li>Verhoogt vetverbranding</li><li>Remt aanmaak nieuwe vetcellen</li><li>Verhoogt energieniveau</li></ul><br><p><b>Toediening:</b> oraal</p>' },
+  { id:'pen',       naam:'Peptide Pen',       hoeveelheid:'1 pen',     prijs:20,   uitverkocht:false, kleur:'#2a2a2a', cap:'#555555', info:'<p>Herbruikbare peptide pen voor eenvoudige toediening.</p>' },
+  { id:'naalden',   naam:'Naalden',           hoeveelheid:'10 stuks',  prijs:5,    uitverkocht:false, kleur:'#1a1a2a', cap:'#888888', info:'<p>Steriele naalden voor subcutane injecties.</p>' },
+  { id:'ampul',     naam:'Ampul voor pen',    hoeveelheid:'per stuk',  prijs:1,    uitverkocht:false, kleur:'#2a2a1a', cap:'#aaaaaa', info:'<p>Vervangampul voor de peptide pen.</p>' },
 ];
 
-// Producten klaar
+function maakVial(product, groot) {
+  const s = groot ? 3 : 1;
+  const w = groot ? 80 : 44;
+  const h = groot ? 110 : 62;
+  const cw = groot ? 50 : 28;
+  const ch = groot ? 24 : 14;
+  const fs = groot ? 12 : 8;
+  const label = product.naam.length > 8 ? product.naam.substring(0,8) : product.naam;
+  return `<div style="display:flex;flex-direction:column;align-items:center;">
+    <div style="width:${cw}px;height:${ch}px;background:${product.cap};border-radius:4px 4px 0 0;box-shadow:0 -2px 4px rgba(0,0,0,0.3);"></div>
+    <div style="width:${w}px;height:${h}px;background:${product.kleur};border-radius:4px 4px 8px 8px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset -4px 0 8px rgba(0,0,0,0.3),inset 4px 0 8px rgba(255,255,255,0.08),0 4px 12px rgba(0,0,0,0.4);">
+      <div style="position:absolute;top:4px;left:8px;width:${groot?14:8}px;bottom:4px;background:rgba(255,255,255,0.12);border-radius:4px;"></div>
+      <div style="background:rgba(255,255,255,0.15);padding:${groot?'6px 8px':'3px 4px'};border-radius:3px;text-align:center;">
+        <div style="font-size:${fs}px;font-weight:900;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);letter-spacing:0.5px;line-height:1.2;">${label}</div>
+        <div style="font-size:${groot?9:6}px;color:rgba(255,255,255,0.7);margin-top:2px;">${product.hoeveelheid}</div>
+      </div>
+    </div>
+  </div>`;
+}
 
 let cart = [];
 let huidigDetail = null;
 let detailQty = 1;
 let huidigTab = 0;
-
-function getImg(product) {
-  if (product.img) return BASE_IMG + product.img;
-  return BASE_IMG + 'Bacwater_3_ml.png';
-}
 
 function bouwGrid() {
   const grid = document.getElementById('product-grid');
@@ -618,10 +291,10 @@ function bouwGrid() {
     const div = document.createElement('div');
     div.className = 'product-card' + (inCart ? ' in-cart' : '');
     div.innerHTML = `
-      <div style="position:relative">
-        <img class="product-img" src="${getImg(p)}" alt="${p.naam}" onerror="this.src='${BASE_IMG}Bacwater_3_ml.png'">
+      <div class="product-icon" style="background:linear-gradient(180deg,${p.kleur}88 0%,${p.kleur}44 100%);padding:16px;position:relative;">
+        ${maakVial(p, false)}
         ${inCart ? `<div class="product-badge">${inCart.aantal}</div>` : ''}
-        ${p.uitverkocht ? '<div class="uitverkocht-badge"><span>Uitverkocht</span></div>' : ''}
+        ${p.uitverkocht ? '<div class="uitverkocht-overlay"><span>Uitverkocht</span></div>' : ''}
       </div>
       <div class="product-info">
         <div class="product-name">${p.naam}</div>
@@ -637,7 +310,7 @@ function openDetail(idx) {
   huidigDetail = PRODUCTEN[idx];
   detailQty = 1;
   document.getElementById('detail-header-naam').textContent = huidigDetail.naam;
-  document.getElementById('detail-img').src = getImg(huidigDetail);
+  document.getElementById('detail-icon-wrap').innerHTML = `<div style="background:linear-gradient(180deg,${huidigDetail.kleur}88,${huidigDetail.kleur}44);width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${maakVial(huidigDetail, true)}</div>`;
   document.getElementById('detail-naam').textContent = huidigDetail.naam;
   document.getElementById('detail-hoeveelheid').textContent = huidigDetail.hoeveelheid;
   document.getElementById('detail-prijs').textContent = `€${huidigDetail.prijs.toFixed(2)}`;
@@ -646,9 +319,7 @@ function openDetail(idx) {
   document.getElementById('detail-view').classList.add('open');
 }
 
-function sluitDetail() {
-  document.getElementById('detail-view').classList.remove('open');
-}
+function sluitDetail() { document.getElementById('detail-view').classList.remove('open'); }
 
 function qtyAanpassen(delta) {
   detailQty = Math.max(1, detailQty + delta);
@@ -658,11 +329,8 @@ function qtyAanpassen(delta) {
 function voegToeVanuitDetail() {
   if (!huidigDetail) return;
   const bestaand = cart.find(c => c.id === huidigDetail.id);
-  if (bestaand) {
-    bestaand.aantal += detailQty;
-  } else {
-    cart.push({ ...huidigDetail, aantal: detailQty });
-  }
+  if (bestaand) bestaand.aantal += detailQty;
+  else cart.push({ ...huidigDetail, aantal: detailQty });
   updateCart();
   sluitDetail();
   setTab(1);
@@ -680,28 +348,24 @@ function updateCart() {
   document.getElementById('cart-count').textContent = count;
   document.getElementById('cart-total-float').textContent = totaal.toFixed(2);
   const fc = document.getElementById('floating-cart');
-  if (cart.length > 0 && huidigTab === 0) fc.classList.add('visible');
-  else fc.classList.remove('visible');
+  fc.style.display = (cart.length > 0 && huidigTab === 0) ? 'flex' : 'none';
   bouwGrid();
 }
 
 function renderCart() {
   const content = document.getElementById('cart-content');
   const form = document.getElementById('bestel-form');
-  const succes = document.getElementById('succes-view');
-  succes.classList.remove('open');
-
+  document.getElementById('succes-view').classList.remove('open');
   if (cart.length === 0) {
     content.innerHTML = `<div class="cart-empty"><div class="icon">🛒</div><p>Je winkelwagen is leeg</p></div>`;
     form.style.display = 'none';
     return;
   }
-
   const totaal = cart.reduce((s, i) => s + i.prijs * i.aantal, 0);
   let html = '';
   cart.forEach(item => {
     html += `<div class="cart-item">
-      <img class="cart-item-img" src="${getImg(item)}" onerror="this.src='${BASE_IMG}Bacwater_3_ml.png'" alt="">
+      <div class="cart-item-icon" style="background:linear-gradient(135deg,${item.kleur}88,${item.kleur}44);">${maakVial(item, false)}</div>
       <div class="cart-item-info">
         <div class="cart-item-name">${item.naam}</div>
         <div class="cart-item-sub">${item.hoeveelheid} × ${item.aantal}</div>
@@ -710,39 +374,24 @@ function renderCart() {
       <button class="cart-item-remove" onclick="verwijderUitCart('${item.id}')">×</button>
     </div>`;
   });
-
   html += `<div class="cart-totaal">
     <div class="cart-totaal-row"><span>Subtotaal</span><span>€${totaal.toFixed(2)}</span></div>
-    <div class="cart-totaal-row"><span>Verzending</span><span>Op afspraak</span></div>
     <div class="cart-totaal-row totaal"><span>Totaal</span><span>€${totaal.toFixed(2)}</span></div>
   </div>
   <div class="cart-gratis">✅ Bacwater en alcoholdoekjes altijd gratis inbegrepen!</div>`;
-
   content.innerHTML = html;
   form.style.display = 'block';
 }
 
-async function verstuurBestelling() {
+function verstuurBestelling() {
   const naam = document.getElementById('input-naam').value.trim();
   const straat = document.getElementById('input-straat').value.trim();
   const woonplaats = document.getElementById('input-woonplaats').value.trim();
-
-  if (!naam || !straat || !woonplaats) {
-    alert('Vul alle velden in.');
-    return;
-  }
-
-  const regels = cart.map(i => `${i.aantal}x ${i.naam} – €${(i.prijs * i.aantal).toFixed(2)}`).join('\n');
+  if (!naam || !straat || !woonplaats) { alert('Vul alle velden in.'); return; }
   const totaal = cart.reduce((s, i) => s + i.prijs * i.aantal, 0);
-  const adres = `${straat}, ${woonplaats}`;
-  const tekst = `🛒 NIEUWE BESTELLING\n\n👤 ${naam}\n📮 ${adres}\n\nProducten:\n${regels}\n\n✅ Bacwater en alcoholdoekjes gratis inbegrepen!\n\n💰 Totaal: €${totaal.toFixed(2)}`;
-
   if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.sendData(JSON.stringify({
-      naam, adres, producten: cart, totaal
-    }));
+    window.Telegram.WebApp.sendData(JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, producten: cart.map(i => ({naam:i.naam,aantal:i.aantal,prijs:i.prijs})), totaal }));
   }
-
   document.getElementById('cart-content').innerHTML = '';
   document.getElementById('bestel-form').style.display = 'none';
   document.getElementById('succes-view').classList.add('open');
@@ -763,7 +412,6 @@ function setTab(idx) {
   updateCart();
 }
 
-// Init
 if (window.Telegram && window.Telegram.WebApp) {
   window.Telegram.WebApp.ready();
   window.Telegram.WebApp.expand();
