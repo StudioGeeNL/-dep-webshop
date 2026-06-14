@@ -577,8 +577,6 @@ const PRODUCTEN = [
     info: '<p>Topisch serum — direct op de huid.</p><br><ul><li>Stimuleert collageen</li><li>Vermindert rimpels</li><li>Verbetert huidtextuur</li></ul>' },
   { id: 'ghkserum30', naam: 'Ghk-Cu Serum 30ml', hoeveelheid: '30 ml', prijs: 30, uitverkocht: false, img: null,
     info: '<p>Grotere verpakking GHK-Cu serum. Zelfde werking als 7ml.</p>' },
-  { id: 'igf1lr3', naam: 'IGF 1 LR3', hoeveelheid: '1 mg', prijs: 75, uitverkocht: false, img: 'IGF_1_LR3_1mg.png',
-    info: '<ul><li>Stimuleert spiergroei</li><li>Versnelt vetverlies</li><li>Verbetert herstel</li></ul>' },
   { id: 'kpv', naam: 'KPV', hoeveelheid: '5 mg', prijs: 25, uitverkocht: false, img: null,
     info: '<ul><li>Ontstekingsremmend</li><li>Effectief bij darmziekten</li><li>Wondgenezing huid</li></ul>' },
   { id: 'motsc', naam: 'MOTS-C', hoeveelheid: '10 mg', prijs: 40, uitverkocht: false, img: null,
@@ -600,12 +598,7 @@ const PRODUCTEN = [
   { id: 'ampul', naam: 'Ampul voor pen', hoeveelheid: 'per stuk', prijs: 1, uitverkocht: false, img: null, info: '<p>Vervangampul voor de peptide pen.</p>' },
 ];
 
-// Verwijder duplicaten op id
-const uniek = [];
-const gezien = new Set();
-for (const p of PRODUCTEN) {
-  if (!gezien.has(p.id)) { gezien.add(p.id); uniek.push(p); }
-}
+// Producten klaar
 
 let cart = [];
 let huidigDetail = null;
