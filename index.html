@@ -381,9 +381,21 @@ function verstuurBestelling() {
   const opmerkingen = document.getElementById('input-opmerkingen').value.trim();
   if (!naam || !straat || !woonplaats || !email) { alert('Vul alle verplichte velden in (naam, adres en e-mail).'); return; }
   const totaal = cart.reduce((s, i) => s + i.prijs * i.aantal, 0);
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.sendData(JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten: cart.map(i => ({naam:i.naam,aantal:i.aantal,prijs:i.prijs})), totaal }));
+
+  const payload = JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten: cart.map(i => ({naam:i.naam,aantal:i.aantal,prijs:i.prijs})), totaal });
+
+  if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
+    try {
+      window.Telegram.WebApp.sendData(payload);
+    } catch (err) {
+      alert('Fout bij versturen: ' + err.message);
+      return;
+    }
+  } else {
+    alert('Telegram-koppeling niet beschikbaar. Open de webshop via de knop in de bot (niet via een link of de browser).');
+    return;
   }
+
   document.getElementById('cart-content').innerHTML = '';
   document.getElementById('bestel-form').style.display = 'none';
   document.getElementById('succes-view').classList.add('open');
