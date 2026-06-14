@@ -15,11 +15,13 @@
     --dep-pink: #D946A8;
     --dep-accent: #A855F7;
     --dep-white: #F8F8FF;
-    --dep-grey: #8888AA;
+    --dep-grey: #BBBBCC;
     --dep-card: #1A1A30;
     --dep-border: rgba(107,47,217,0.3);
   }
-  body { background: var(--dep-dark); color: var(--dep-white); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body { background: var(--dep-dark) !important; color: #FFFFFF !important; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
+  * { color: inherit; }
+  p, span, div, li, label { color: #FFFFFF; }
 
   .header { background: linear-gradient(135deg, var(--dep-navy) 0%, #1a0a3a 100%); padding: 16px; text-align: center; border-bottom: 1px solid var(--dep-border); position: sticky; top: 0; z-index: 100; }
   .header-logo { font-size: 11px; letter-spacing: 4px; color: var(--dep-grey); text-transform: uppercase; margin-bottom: 2px; }
