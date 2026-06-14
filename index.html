@@ -127,6 +127,7 @@
   .cart-totaal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; color: var(--dep-grey); }
   .cart-totaal-row.totaal { font-size: 18px; font-weight: 800; color: var(--dep-white); margin-bottom: 0; padding-top: 10px; border-top: 1px solid var(--dep-border); }
   .cart-gratis { background: rgba(107,47,217,0.15); border: 1px solid var(--dep-border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--dep-accent); margin-bottom: 16px; }
+  .cart-verzending { background: rgba(217,70,168,0.12); border: 1px solid rgba(217,70,168,0.3); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #F0A8D8; margin-bottom: 16px; line-height: 1.5; }
 
   /* FORM */
   .form-group { margin-bottom: 16px; }
@@ -366,9 +367,11 @@ function renderCart() {
   });
   html += `<div class="cart-totaal">
     <div class="cart-totaal-row"><span>Subtotaal</span><span>€${totaal.toFixed(2)}</span></div>
+    <div class="cart-totaal-row"><span>Verzendkosten</span><span>Excl.</span></div>
     <div class="cart-totaal-row totaal"><span>Totaal</span><span>€${totaal.toFixed(2)}</span></div>
   </div>
-  <div class="cart-gratis">✅ Bacwater en alcoholdoekjes altijd gratis inbegrepen!</div>`;
+  <div class="cart-gratis">✅ Bacwater en alcoholdoekjes altijd gratis inbegrepen!</div>
+  <div class="cart-verzending">📦 Genoemde prijzen zijn <b>exclusief verzendkosten</b>. Anna laat je de verzendkosten weten bij het bevestigen van je bestelling.</div>`;
   content.innerHTML = html;
   form.style.display = 'block';
 }
