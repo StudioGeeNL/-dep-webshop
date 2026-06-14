@@ -173,6 +173,8 @@
       <div class="form-group"><label class="form-label">Volledige naam</label><input class="form-input" id="input-naam" type="text" placeholder="Jan de Vries"></div>
       <div class="form-group"><label class="form-label">Straat + huisnummer</label><input class="form-input" id="input-straat" type="text" placeholder="Hoofdstraat 12"></div>
       <div class="form-group"><label class="form-label">Postcode + woonplaats</label><input class="form-input" id="input-woonplaats" type="text" placeholder="5000 AB Tilburg"></div>
+      <div class="form-group"><label class="form-label">E-mailadres</label><input class="form-input" id="input-email" type="email" placeholder="jan@email.nl"></div>
+      <div class="form-group"><label class="form-label">Opmerkingen (optioneel)</label><textarea class="form-input" id="input-opmerkingen" rows="3" placeholder="Bijv. specifieke wensen of vragen..." style="resize:none;"></textarea></div>
       <button class="bestel-btn" onclick="verstuurBestelling()">✅ Bestelling plaatsen</button>
     </div>
     <div class="succes-view" id="succes-view">
@@ -373,10 +375,12 @@ function verstuurBestelling() {
   const naam = document.getElementById('input-naam').value.trim();
   const straat = document.getElementById('input-straat').value.trim();
   const woonplaats = document.getElementById('input-woonplaats').value.trim();
-  if (!naam || !straat || !woonplaats) { alert('Vul alle velden in.'); return; }
+  const email = document.getElementById('input-email').value.trim();
+  const opmerkingen = document.getElementById('input-opmerkingen').value.trim();
+  if (!naam || !straat || !woonplaats || !email) { alert('Vul alle verplichte velden in (naam, adres en e-mail).'); return; }
   const totaal = cart.reduce((s, i) => s + i.prijs * i.aantal, 0);
   if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.sendData(JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, producten: cart.map(i => ({naam:i.naam,aantal:i.aantal,prijs:i.prijs})), totaal }));
+    window.Telegram.WebApp.sendData(JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten: cart.map(i => ({naam:i.naam,aantal:i.aantal,prijs:i.prijs})), totaal }));
   }
   document.getElementById('cart-content').innerHTML = '';
   document.getElementById('bestel-form').style.display = 'none';
