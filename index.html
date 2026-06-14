@@ -128,6 +128,11 @@
   .cart-totaal-row.totaal { font-size: 18px; font-weight: 800; color: var(--dep-white); margin-bottom: 0; padding-top: 10px; border-top: 1px solid var(--dep-border); }
   .cart-gratis { background: rgba(107,47,217,0.15); border: 1px solid var(--dep-border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--dep-accent); margin-bottom: 16px; }
   .cart-verzending { background: rgba(217,70,168,0.12); border: 1px solid rgba(217,70,168,0.3); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #F0A8D8; margin-bottom: 16px; line-height: 1.5; }
+  .naalden-box { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .naalden-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .naalden-titel { font-size: 15px; font-weight: 700; }
+  .naalden-sub { font-size: 12px; color: var(--dep-grey); margin-top: 2px; }
+  .naalden-totaal { font-size: 13px; color: var(--dep-accent); font-weight: 700; margin-top: 10px; }
 
   /* FORM */
   .form-group { margin-bottom: 16px; }
@@ -172,6 +177,20 @@
   <div class="page" id="page-1">
     <div id="cart-content"></div>
     <div id="bestel-form" style="display:none">
+      <div class="naalden-box">
+        <div class="naalden-header">
+          <div>
+            <div class="naalden-titel">💉 Naalden nodig?</div>
+            <div class="naalden-sub">10 stuks voor €5,-</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="naaldenAanpassen(-1)">−</button>
+            <div class="qty-num" id="naalden-num">0</div>
+            <button class="qty-btn" onclick="naaldenAanpassen(1)">+</button>
+          </div>
+        </div>
+        <div class="naalden-totaal" id="naalden-totaal"></div>
+      </div>
       <h3 style="margin-bottom:16px;font-size:16px;">📦 Bezorggegevens</h3>
       <div class="form-group"><label class="form-label">Volledige naam</label><input class="form-input" id="input-naam" type="text" placeholder="Jan de Vries"></div>
       <div class="form-group"><label class="form-label">Straat + huisnummer</label><input class="form-input" id="input-straat" type="text" placeholder="Hoofdstraat 12"></div>
@@ -275,6 +294,19 @@ let cart = [];
 let huidigDetail = null;
 let detailQty = 1;
 let huidigTab = 0;
+let naaldenAantal = 0;
+const NAALDEN_PRIJS = 5;
+
+function naaldenAanpassen(delta) {
+  naaldenAantal = Math.max(0, naaldenAantal + delta);
+  document.getElementById('naalden-num').textContent = naaldenAantal;
+  const totaalEl = document.getElementById('naalden-totaal');
+  if (naaldenAantal > 0) {
+    totaalEl.textContent = `${naaldenAantal}x = ${naaldenAantal * 10} naalden — €${(naaldenAantal * NAALDEN_PRIJS).toFixed(2)}`;
+  } else {
+    totaalEl.textContent = '';
+  }
+}
 
 function bouwGrid() {
   const grid = document.getElementById('product-grid');
@@ -383,9 +415,15 @@ function verstuurBestelling() {
   const email = document.getElementById('input-email').value.trim();
   const opmerkingen = document.getElementById('input-opmerkingen').value.trim();
   if (!naam || !straat || !woonplaats || !email) { alert('Vul alle verplichte velden in (naam, adres en e-mail).'); return; }
-  const totaal = cart.reduce((s, i) => s + i.prijs * i.aantal, 0);
 
-  const payload = JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten: cart.map(i => ({naam:i.naam,aantal:i.aantal,prijs:i.prijs})), totaal });
+  // Bouw producten lijst, voeg naalden toe indien gekozen
+  const producten = cart.map(i => ({naam:i.naam, aantal:i.aantal, prijs:i.prijs}));
+  if (naaldenAantal > 0) {
+    producten.push({ naam: `Naalden (${naaldenAantal * 10} stuks)`, aantal: naaldenAantal, prijs: NAALDEN_PRIJS });
+  }
+  const totaal = producten.reduce((s, i) => s + i.prijs * i.aantal, 0);
+
+  const payload = JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten, totaal });
 
   if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
     try {
@@ -403,6 +441,9 @@ function verstuurBestelling() {
   document.getElementById('bestel-form').style.display = 'none';
   document.getElementById('succes-view').classList.add('open');
   cart = [];
+  naaldenAantal = 0;
+  document.getElementById('naalden-num').textContent = '0';
+  document.getElementById('naalden-totaal').textContent = '';
   updateCart();
 }
 
