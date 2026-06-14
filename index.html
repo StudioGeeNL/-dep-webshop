@@ -35,18 +35,7 @@
   .page { display: none; }
   .page.active { display: block; }
 
-  /* PRODUCT ICON */
-  .product-icon {
-    width: 100%;
-    aspect-ratio: 0.7;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px 12px 0 0;
-    position: relative;
-    overflow: hidden;
-  }
+
   .vial-body {
     width: 44px;
     height: 62px;
@@ -84,20 +73,19 @@
     border-radius: 4px;
   }
 
-  /* PRODUCT GRID */
-  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .product-card { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; position: relative; }
-  .product-card:active { transform: scale(0.97); }
+  /* PRODUCT LIST */
+  .product-grid { display: flex; flex-direction: column; gap: 6px; }
+  .product-card { background: var(--dep-card); border: 1px solid var(--dep-border); border-radius: 10px; cursor: pointer; transition: background 0.15s, border-color 0.15s; position: relative; display: flex; align-items: center; padding: 12px 14px; gap: 12px; }
+  .product-card:active { background: #22223a; }
   .product-card.in-cart { border-color: var(--dep-purple); }
-  .product-badge { position: absolute; top: 8px; right: 8px; background: var(--dep-purple); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; z-index: 2; }
-  .uitverkocht-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 56%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
-  .uitverkocht-overlay span { background: #ff4444; color: white; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
-  .product-info { padding: 7px; }
-  .product-name { font-size: 11px; font-weight: 700; margin-bottom: 1px; line-height: 1.2; }
-  .product-hoeveelheid { font-size: 9px; color: var(--dep-grey); margin-bottom: 4px; }
-  .product-prijs { font-size: 13px; font-weight: 800; color: var(--dep-accent); }
-  .add-btn { width: 100%; margin-top: 5px; padding: 5px; background: linear-gradient(135deg, var(--dep-purple), var(--dep-pink)); border: none; border-radius: 8px; color: white; font-size: 11px; font-weight: 700; cursor: pointer; }
-  .add-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+  .product-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .product-info { flex: 1; }
+  .product-name { font-size: 14px; font-weight: 700; margin-bottom: 1px; }
+  .product-hoeveelheid { font-size: 11px; color: var(--dep-grey); }
+  .product-prijs { font-size: 14px; font-weight: 800; color: var(--dep-accent); flex-shrink: 0; }
+  .product-badge { background: var(--dep-purple); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .uitverkocht-tag { font-size: 10px; color: #ff6666; font-weight: 600; flex-shrink: 0; }
+  .chevron { color: var(--dep-grey); font-size: 16px; flex-shrink: 0; }
 
   /* DETAIL */
   .detail-view { display: none; position: fixed; inset: 0; background: var(--dep-dark); z-index: 200; overflow-y: auto; }
@@ -290,18 +278,16 @@ function bouwGrid() {
     const inCart = cart.find(c => c.id === p.id);
     const div = document.createElement('div');
     div.className = 'product-card' + (inCart ? ' in-cart' : '');
+    div.onclick = () => openDetail(i);
     div.innerHTML = `
-      <div class="product-icon" style="background:linear-gradient(180deg,${p.kleur}88 0%,${p.kleur}44 100%);padding:10px;position:relative;">
-        ${maakVial(p, false)}
-        ${inCart ? `<div class="product-badge">${inCart.aantal}</div>` : ''}
-        ${p.uitverkocht ? '<div class="uitverkocht-overlay"><span>Uitverkocht</span></div>' : ''}
-      </div>
+      <div class="product-dot" style="background:${p.cap};"></div>
       <div class="product-info">
         <div class="product-name">${p.naam}</div>
         <div class="product-hoeveelheid">${p.hoeveelheid}</div>
-        <div class="product-prijs">€${p.prijs.toFixed(2)}</div>
-        <button class="add-btn" ${p.uitverkocht ? 'disabled' : ''} onclick="openDetail(${i})">${p.uitverkocht ? 'Uitverkocht' : 'Bekijken'}</button>
-      </div>`;
+      </div>
+      <div class="product-prijs">€${p.prijs.toFixed(2)}</div>
+      ${inCart ? `<div class="product-badge">${inCart.aantal}</div>` : ''}
+      ${p.uitverkocht ? '<span class="uitverkocht-tag">Uitverkocht</span>' : '<span class="chevron">›</span>'}`;
     grid.appendChild(div);
   });
 }
