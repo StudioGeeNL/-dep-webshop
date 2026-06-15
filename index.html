@@ -193,6 +193,7 @@
       </div>
       <h3 style="margin-bottom:16px;font-size:16px;">📦 Bezorggegevens</h3>
       <div class="form-group"><label class="form-label">Volledige naam</label><input class="form-input" id="input-naam" type="text" placeholder="Jan de Vries"></div>
+      <div class="form-group"><label class="form-label">Telefoonnummer</label><input class="form-input" id="input-tel" type="tel" placeholder="06 12345678"></div>
       <div class="form-group"><label class="form-label">Straat + huisnummer</label><input class="form-input" id="input-straat" type="text" placeholder="Hoofdstraat 12"></div>
       <div class="form-group"><label class="form-label">Postcode + woonplaats</label><input class="form-input" id="input-woonplaats" type="text" placeholder="5000 AB Tilburg"></div>
       <div class="form-group"><label class="form-label">E-mailadres</label><input class="form-input" id="input-email" type="email" placeholder="jan@email.nl"></div>
@@ -248,7 +249,7 @@ const PRODUCTEN = [
   { id:'epithalon', naam:'Epithalon',         hoeveelheid:'10 mg',     prijs:40,   uitverkocht:false, kleur:'#1a4a2e', cap:'#228a4a', info:'<ul><li>Anti-aging op cellulair niveau</li><li>Verbetert slaapkwaliteit</li><li>Versterkt immuunsysteem</li></ul><br><p><b>Toediening:</b> injectie (subcutaan)</p>' },
   { id:'ghkserum7', naam:'Ghk-Cu Serum 7ml',  hoeveelheid:'7 ml',      prijs:7.5,  uitverkocht:false, kleur:'#3a2a1a', cap:'#c8860a', info:'<ul><li>Stimuleert collageen</li><li>Vermindert rimpels</li><li>Verbetert huidtextuur</li></ul><br><p><b>Toediening:</b> topisch op huid</p>' },
   { id:'ghkserum30',naam:'Ghk-Cu Serum 30ml', hoeveelheid:'30 ml',     prijs:30,   uitverkocht:false, kleur:'#3a2a1a', cap:'#c8860a', info:'<p>Grotere verpakking GHK-Cu serum. Zelfde werking als 7ml.</p><br><p><b>Toediening:</b> topisch op huid</p>' },
-  { id:'ghkcu',     naam:'GHK-CU',            hoeveelheid:'50 mg',     prijs:20,   uitverkocht:true,  kleur:'#2a1a3a', cap:'#8B5CF6', info:'<ul><li>Stimuleert collageenproductie</li><li>Wondgenezing</li><li>Huidverjonging</li></ul>' },
+  { id:'ghkcu',     naam:'GHK-CU',            hoeveelheid:'100 mg',    prijs:40,   uitverkocht:false, kleur:'#2a1a3a', cap:'#8B5CF6', info:'<ul><li>Stimuleert collageenproductie</li><li>Wondgenezing</li><li>Huidverjonging</li></ul>' },
   { id:'igf1lr3',   naam:'IGF 1 LR3',         hoeveelheid:'1 mg',      prijs:75,   uitverkocht:false, kleur:'#1a1a1a', cap:'#333333', info:'<ul><li>Stimuleert spiergroei</li><li>Versnelt vetverlies</li><li>Verbetert herstel na training</li><li>Verhoogt spierkracht</li></ul><br><p><b>Toediening:</b> injectie</p>' },
   { id:'kpv',       naam:'KPV',               hoeveelheid:'5 mg',      prijs:25,   uitverkocht:false, kleur:'#1a3a3a', cap:'#0a8a8a', info:'<ul><li>Ontstekingsremmend</li><li>Effectief bij darmziekten</li><li>Wondgenezing huid</li></ul><br><p><b>Toediening:</b> oraal of injectie</p>' },
   { id:'mounjaro15',naam:'Mounjaro 15mg',      hoeveelheid:'15 mg',     prijs:150,  uitverkocht:false, kleur:'#3a1a1a', cap:'#cc2222', info:'<ul><li>Gemiddeld 15-22% gewichtsverlies</li><li>Krachtige eetlustremming</li><li>Verbetert bloedsuikerspiegel</li></ul><br><p><b>Toediening:</b> injectie, wekelijks</p>' },
@@ -410,11 +411,12 @@ function renderCart() {
 
 function verstuurBestelling() {
   const naam = document.getElementById('input-naam').value.trim();
+  const tel = document.getElementById('input-tel').value.trim();
   const straat = document.getElementById('input-straat').value.trim();
   const woonplaats = document.getElementById('input-woonplaats').value.trim();
   const email = document.getElementById('input-email').value.trim();
   const opmerkingen = document.getElementById('input-opmerkingen').value.trim();
-  if (!naam || !straat || !woonplaats || !email) { alert('Vul alle verplichte velden in (naam, adres en e-mail).'); return; }
+  if (!naam || !tel || !straat || !woonplaats || !email) { alert('Vul alle verplichte velden in (naam, telefoonnummer, adres en e-mail).'); return; }
 
   // Bouw producten lijst, voeg naalden toe indien gekozen
   const producten = cart.map(i => ({naam:i.naam, aantal:i.aantal, prijs:i.prijs}));
@@ -423,7 +425,7 @@ function verstuurBestelling() {
   }
   const totaal = producten.reduce((s, i) => s + i.prijs * i.aantal, 0);
 
-  const payload = JSON.stringify({ naam, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten, totaal });
+  const payload = JSON.stringify({ naam, tel, adres: `${straat}, ${woonplaats}`, email, opmerkingen, producten, totaal });
 
   if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
     try {
